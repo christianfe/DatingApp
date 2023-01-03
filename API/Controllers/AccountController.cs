@@ -32,7 +32,7 @@ namespace API.Controllers
 
 			var user = new AppUser
 			{
-				UserName = registerDto.Username,
+				UserName = registerDto.Username.ToLower(),
 				PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
 				PasswordSalt = hmac.Key
 			};
@@ -54,9 +54,8 @@ namespace API.Controllers
 			var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
 
 			for (int i = 0; i < computedHash.Length; i++)
-			{
 				if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid Password");
-			}
+
 			return new UserDto
 			{
 				Username = user.UserName,
@@ -66,7 +65,7 @@ namespace API.Controllers
 
 		private async Task<bool> UserExists(string username)
 		{
-			return await _context.Users.AnyAsync(x => x.UserName.ToLower() == username.ToLower());
+			return await _context.Users.AnyAsync(x => x.UserName == username.ToLower());
 		}
 	}
 }
