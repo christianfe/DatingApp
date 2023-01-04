@@ -22,8 +22,7 @@ export class RegisterComponent implements OnInit {
 				this.cancel();
 			},
 			error: error => {
-				if (error.error.errors.Password) this.toastr.error(error.error.errors.Password[0])
-				if (error.error.errors.Username) this.toastr.error(error.error.errors.Username[0])
+				console.log(error);
 			}
 		})
 	}
