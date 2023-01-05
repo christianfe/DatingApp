@@ -8,7 +8,7 @@ import { User } from '../_models/user';
 	providedIn: 'root'
 })
 export class AccountService {
-	private baseUrl = environment.apiurl;
+	private baseUrl = environment.apiUrl;
 	private currentUserSource = new BehaviorSubject<User | null>(null);
 	currentUser$ = this.currentUserSource.asObservable();
 
@@ -18,10 +18,8 @@ export class AccountService {
 		return this.http.post<User>(this.baseUrl + 'account/login', model).pipe(
 			map((response: User) => {
 				const user = response
-				if (user) {
-					localStorage.setItem('user', JSON.stringify(user));
-					this.currentUserSource.next(user)
-				}
+				if (user)
+					this.setCurrentUser(user);
 			})
 		)
 	}
@@ -29,16 +27,15 @@ export class AccountService {
 	register(model: any) {
 		return this.http.post<User>(this.baseUrl + 'account/register', model).pipe(
 			map(user => {
-				if (user) {
-					localStorage.setItem('user', JSON.stringify(user));
-					this.currentUserSource.next(user);
-				}
+				if (user)
+					this.setCurrentUser(user);
 				return user;
 			})
 		);
 	}
 
 	setCurrentUser(user: User) {
+		localStorage.setItem('user', JSON.stringify(user));
 		this.currentUserSource.next(user);
 	}
 
