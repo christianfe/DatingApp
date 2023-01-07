@@ -42,8 +42,8 @@ import { DatePickerComponent } from './_forms/date-picker/date-picker.component'
 		MemberCardComponent,
 		MemberEditComponent,
 		PhotoEditorComponent,
-  TextInputComponent,
-  DatePickerComponent
+		TextInputComponent,
+		DatePickerComponent
 	],
 	imports: [
 		BrowserAnimationsModule,
