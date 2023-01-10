@@ -5,14 +5,13 @@ import { Component } from '@angular/core';
 	templateUrl: './home.component.html',
 	styleUrls: ['./home.component.css']
 })
+
 export class HomeComponent {
-	users: any;
-	registerMode = false;
+	registerMode: boolean = false;
 
 	constructor() { }
 
-	ngOnInit(): void {
-	}
+	ngOnInit(): void { }
 
 	registerToggle() {
 		this.registerMode = !this.registerMode;

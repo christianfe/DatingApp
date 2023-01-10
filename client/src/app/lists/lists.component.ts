@@ -26,8 +26,6 @@ export class ListsComponent implements OnInit {
 			next: response => {
 				this.members = response.result;
 				this.pagination = response.pagination;
-				console.log(response);
-				console.log(this.pagination);
 			}
 		});
 	}

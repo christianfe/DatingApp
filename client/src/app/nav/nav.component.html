@@ -1,7 +1,10 @@
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-primary">
 	<div class="container">
 
-		<a class="navbar-brand" routerLink="/" routerLinkActive="active">DatingApp</a>
+		<a class="navbar-brand" *ngIf="!(accountService.currentUser$ | async)" routerLink="/"
+			routerLinkActive="active">DatingApp</a>
+		<a class="navbar-brand" *ngIf="accountService.currentUser$ | async" routerLink="/members"
+			routerLinkActive="active">DatingApp</a>
 
 		<ul class="navbar-nav me-auto mb-2 mb-md-0">
 			<ng-container *ngIf="accountService.currentUser$ | async">
@@ -28,8 +31,7 @@
 			</div>
 		</div>
 
-		<form #loginForm="ngForm" class="d-flex" (ngSubmit)="login()" autocomplete="off"
-			*ngIf="!(accountService.currentUser$ | async)">
+		<form #loginForm="ngForm" class="d-flex" (ngSubmit)="login()" *ngIf="!(accountService.currentUser$ | async)">
 			<input name="username" [(ngModel)]="model.username" class="form-control me-2" type="Text"
 				placeholder="Userneme">
 			<input name="password" [(ngModel)]="model.password" class="form-control me-2" type="Password"
