@@ -1,3 +1,4 @@
+using System.Reflection.Metadata.Ecma335;
 using API.DTOs;
 using API.Entities;
 using API.Helpers;
@@ -37,6 +38,14 @@ namespace API.Data
 		public async Task<Connection> GetConnection(string connectionId)
 		{
 			return await _context.Connections.FindAsync(connectionId);
+		}
+
+		public async Task<Group> GetGroupForConnection(string connectionId)
+		{
+			return await _context.Groups
+				.Include(x => x.Connections)
+				.Where(x => x.Connections.Any(c => c.ConnectionId == connectionId))
+				.FirstOrDefaultAsync();
 		}
 
 		public async Task<Message> GetMessage(int id)
