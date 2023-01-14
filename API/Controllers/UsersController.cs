@@ -28,11 +28,11 @@ namespace API.Controllers
 		[HttpGet]
 		public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery] UserParams userParams)
 		{
-			var CurrentUser = await _uow.UserRepository.GetUserByUsernameAsync(User.GetUsername());
-			userParams.CurrentUsername = CurrentUser.UserName;
+			var gender = await _uow.UserRepository.GetUserGender(User.GetUsername());
+			userParams.CurrentUsername = User.GetUsername();
 
 			if (string.IsNullOrEmpty(userParams.Gender))
-				userParams.Gender = CurrentUser.Gender == "male" ? "female" : "male";
+				userParams.Gender = gender == "male" ? "female" : "male";
 
 			var users = await _uow.UserRepository.GetMembersAsync(userParams);
 			Response.AddPaginationsHeader(new PaginationHeader(users.CurrentPage, users.PageSize, users.TotalPages, users.TotalCount));
