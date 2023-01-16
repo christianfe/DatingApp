@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
 	[Authorize]
-
 	public class UsersController : BaseApiController
 	{
 		private readonly IUnitOfwork _uow;
@@ -24,7 +23,6 @@ namespace API.Controllers
 			_photoService = photoService;
 		}
 
-		//[Authorize(Roles = "Admin")]
 		[HttpGet]
 		public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery] UserParams userParams)
 		{
@@ -42,18 +40,19 @@ namespace API.Controllers
 		[HttpGet("{username}")]
 		public async Task<ActionResult<MemberDto>> GetUser(string username)
 		{
-			return await _uow.UserRepository.GetMembersAsync(username);
+			return await _uow.UserRepository.GetMembersAsync(username, (User.GetUsername() == username));
 		}
 
 		[HttpPut]
 		public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
 		{
 			var user = await _uow.UserRepository.GetUserByUsernameAsync(User.GetUsername());
-			if (user == null) return NotFound();
+			if (user == null)
+				return NotFound();
 
 			_mapper.Map(memberUpdateDto, user);
-
-			if (await _uow.Complete()) return NoContent();
+			if (await _uow.Complete())
+				return NoContent();
 
 			return BadRequest("Failed to update user");
 		}
@@ -71,7 +70,7 @@ namespace API.Controllers
 				Url = result.SecureUrl.AbsoluteUri,
 				PublicId = result.PublicId
 			};
-			if (user.Photos.Count == 0) photo.IsMain = true;
+
 			user.Photos.Add(photo);
 			if (await _uow.Complete())
 			{
