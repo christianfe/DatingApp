@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
 	[Authorize]
-
 	public class UsersController : BaseApiController
 	{
 		private readonly IUnitOfwork _uow;
@@ -24,7 +23,6 @@ namespace API.Controllers
 			_photoService = photoService;
 		}
 
-		//[Authorize(Roles = "Admin")]
 		[HttpGet]
 		public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery] UserParams userParams)
 		{
@@ -42,18 +40,19 @@ namespace API.Controllers
 		[HttpGet("{username}")]
 		public async Task<ActionResult<MemberDto>> GetUser(string username)
 		{
-			return await _uow.UserRepository.GetMembersAsync(username);
+			return await _uow.UserRepository.GetMembersAsync(username, (User.GetUsername() == username));
 		}
 
 		[HttpPut]
 		public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
 		{
 			var user = await _uow.UserRepository.GetUserByUsernameAsync(User.GetUsername());
-			if (user == null) return NotFound();
+			if (user == null)
+				return NotFound();
 
 			_mapper.Map(memberUpdateDto, user);
-
-			if (await _uow.Complete()) return NoContent();
+			if (await _uow.Complete())
+				return NoContent();
 
 			return BadRequest("Failed to update user");
 		}
@@ -71,7 +70,7 @@ namespace API.Controllers
 				Url = result.SecureUrl.AbsoluteUri,
 				PublicId = result.PublicId
 			};
-			if (user.Photos.Count == 0) photo.IsMain = true;
+
 			user.Photos.Add(photo);
 			if (await _uow.Complete())
 			{
@@ -101,7 +100,7 @@ namespace API.Controllers
 		[HttpDelete("delete-photo/{photoId}")]
 		public async Task<ActionResult> DeletePhoto(int photoId)
 		{
-			var user = await _uow.UserRepository.GetUserByUsernameAsync(User.GetUsername());
+			var user = await _uow.UserRepository.GetUserByUsernameAsync(User.GetUsername(), true);
 
 			var photo = user.Photos.FirstOrDefault(x => x.Id == photoId);
 			if (photo == null) return NotFound();
@@ -114,7 +113,16 @@ namespace API.Controllers
 			user.Photos.Remove(photo);
 			if (await _uow.Complete()) return NoContent();
 			return BadRequest("A problem occured while deleting the photo");
-		}
 
+			/*
+			var photo = await _uow.PhotoRepository.GetPhotoById(photoId);
+			if (photo == null)
+				return BadRequest("Error deleting Photo");
+			_uow.PhotoRepository.RemovePhoto(photo);
+			if (photo.PublicId != null)
+				_photoService.DeletePhotoAsync(photo.PublicId);
+
+			return NoContent();*/
+		}
 	}
 }

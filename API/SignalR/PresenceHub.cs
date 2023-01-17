@@ -1,5 +1,4 @@
 using API.Extensions;
-using CloudinaryDotNet;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 

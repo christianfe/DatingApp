@@ -1,4 +1,5 @@
 using API.Entities;
+using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -9,10 +10,14 @@ namespace API.Controllers
 	public class AdminController : BaseApiController
 	{
 		private readonly UserManager<AppUser> _userManager;
+		private readonly IUnitOfwork _uow;
+		private readonly IPhotoService _photoService;
 
-		public AdminController(UserManager<AppUser> userManager)
+		public AdminController(UserManager<AppUser> userManager, IUnitOfwork uow, IPhotoService photoService)
 		{
+			_uow = uow;
 			_userManager = userManager;
+			_photoService = photoService;
 		}
 
 
@@ -32,6 +37,7 @@ namespace API.Controllers
 
 			return Ok(users);
 		}
+
 
 		[Authorize(Policy = "RequireAdminRole")]
 		[HttpPost("edit-roles/{username}")]
@@ -57,9 +63,40 @@ namespace API.Controllers
 
 		[Authorize(Policy = "ModeratePhotoRole")]
 		[HttpGet("photos-to-moderate")]
-		public ActionResult GetPhotoForModeration()
+		public async Task<ActionResult> GetPhotoForModeration()
 		{
-			return Ok("admins or moderators can see this");
+			var p = await _uow.PhotoRepository.GetUnapprovedPhotos();
+			return Ok(p);
+		}
+
+		[Authorize(Policy = "ModeratePhotoRole")]
+		[HttpPut("approve-photo/{photoId}")]
+		public async Task<ActionResult> ApprovePhoto(int photoId)
+		{
+			var photo = await _uow.PhotoRepository.GetPhotoById(photoId);
+			photo.isApproved = true;
+
+			var user = await _uow.PhotoRepository.GetUserByPhotoId(photoId);
+
+			if (!user.Photos.Any(x => x.IsMain))
+				photo.IsMain = true;
+
+			await _uow.Complete();
+			return NoContent();
+		}
+
+		[Authorize(Policy = "ModeratePhotoRole")]
+		[HttpDelete("reject-photo/{photoId}")]
+		public async Task<ActionResult> RejectPhoto(int photoId)
+		{
+			var photo = await _uow.PhotoRepository.GetPhotoById(photoId);
+			if (photo == null)
+				return BadRequest("Error deleting Photo");
+			_uow.PhotoRepository.RemovePhoto(photo);
+			if (photo.PublicId != null)
+				_photoService.DeletePhotoAsync(photo.PublicId);
+
+			return NoContent();
 		}
 	}
 }
