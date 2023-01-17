@@ -114,6 +114,5 @@ namespace API.Controllers
 			if (await _uow.Complete()) return NoContent();
 			return BadRequest("A problem occured while deleting the photo");
 		}
-
 	}
 }
