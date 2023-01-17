@@ -40,6 +40,7 @@ app.MapHub<PresenceHub>("/hubs/presence");
 app.MapHub<MessageHub>("/hubs/message");
 app.MapFallbackToController("Index", "Fallback");
 
+
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 try
@@ -48,8 +49,7 @@ try
 	var userManager = services.GetRequiredService<UserManager<AppUser>>();
 	var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
 	await context.Database.MigrateAsync();
-	//context.Connections.RemoveRange(context.Connections); drop the Connections database, it can be a very hard task, so i do it manually
-	await context.Database.ExecuteSqlRawAsync("DELETE FROM [Connections]");
+	await Seed.ClearConnections(context);
 	await Seed.SeedUsers(userManager, roleManager);
 }
 catch (Exception ex)
