@@ -1,0 +1,12 @@
+Production
+ng build
+docker build -t christianfe/datingapp .
+docker push christianfe/datingapp
+docker run --rm -it -p 8080:80 christianfe/datingapp:latest
+
+
+
+flyctl launch --image christianfe/datingapp:latest
+flyctl secrets set TokenKey=GTiv3EDPhjsMTfos4vr2
+flyctl secrets list
+flyctl deploy
