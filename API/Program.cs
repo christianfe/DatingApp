@@ -14,6 +14,8 @@ builder.Services.AddControllers();
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityService(builder.Configuration);
 
+/*
+// uncomment for fly.io
 var connString = "";
 if (builder.Environment.IsDevelopment())
 	connString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -39,6 +41,7 @@ builder.Services.AddDbContext<DataContext>(opt =>
 {
 	opt.UseNpgsql(connString);
 });
+*/
 
 var app = builder.Build();
 
