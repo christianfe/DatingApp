@@ -9,6 +9,7 @@ using API.Helpers;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data
@@ -63,11 +64,16 @@ namespace API.Data
 			return await _context.Users.FindAsync(id);
 		}
 
-		public async Task<AppUser> GetUserByUsernameAsync(string username)
+		public async Task<AppUser> GetUserByUsernameAsync(string username, bool isCurrentUser = false)
 		{
-			return await _context.Users
+
+			var query = _context.Users
 				.Include(p => p.Photos)
-				.SingleOrDefaultAsync(x => x.UserName == username);
+				.AsQueryable();
+
+			if (isCurrentUser) query = query.IgnoreQueryFilters();
+
+			return await query.SingleOrDefaultAsync(x => x.UserName == username); ;
 		}
 
 		public async Task<string> GetUserGender(string username)

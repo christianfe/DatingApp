@@ -100,7 +100,7 @@ namespace API.Controllers
 		[HttpDelete("delete-photo/{photoId}")]
 		public async Task<ActionResult> DeletePhoto(int photoId)
 		{
-			var user = await _uow.UserRepository.GetUserByUsernameAsync(User.GetUsername());
+			var user = await _uow.UserRepository.GetUserByUsernameAsync(User.GetUsername(), true);
 
 			var photo = user.Photos.FirstOrDefault(x => x.Id == photoId);
 			if (photo == null) return NotFound();
@@ -113,6 +113,16 @@ namespace API.Controllers
 			user.Photos.Remove(photo);
 			if (await _uow.Complete()) return NoContent();
 			return BadRequest("A problem occured while deleting the photo");
+
+			/*
+			var photo = await _uow.PhotoRepository.GetPhotoById(photoId);
+			if (photo == null)
+				return BadRequest("Error deleting Photo");
+			_uow.PhotoRepository.RemovePhoto(photo);
+			if (photo.PublicId != null)
+				_photoService.DeletePhotoAsync(photo.PublicId);
+
+			return NoContent();*/
 		}
 	}
 }
