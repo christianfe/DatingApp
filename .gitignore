@@ -477,8 +477,10 @@ $RECYCLE.BIN/
 *.lnk
 
 # SqLite Temp File
-.db-shm
-.db-wal
+*.db-shm
+*.db-wal
 
 #Appsettings
 appsettings.json
+API/datingapp.db-shm
+API/datingapp.db-wal
