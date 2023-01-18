@@ -15,13 +15,13 @@ namespace API.Extensions
 	{
 		public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
 		{
-			/*
-		   // comment for fly.io
-		   services.AddDbContext<DataContext>(opt =>
-		   {
-			   opt.UseNpgsql(config.GetConnectionString("DefaultConnection"));
-		   });
-		   */
+			///*
+			// comment for fly.io
+			services.AddDbContext<DataContext>(opt =>
+			{
+				opt.UseNpgsql(config.GetConnectionString("DefaultConnection"));
+			});
+			//*/
 			services.AddCors();
 			services.AddScoped<ITokenService, TokenService>();
 			services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

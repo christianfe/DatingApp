@@ -11,8 +11,11 @@ flyctl secrets set TokenKey=G
 flyctl secrets list
 flyctl deploy
 
+flyctl proxy 6543:5432 -a datingapp-christianfe-db
+flyctl log -a datingapp-christianfe
 
 
+ flyctl auth token
 
 
 ##
