@@ -1,7 +1,7 @@
 Production
 ng build
 docker build -t christianfe/datingapp .
-docker push christianfe/datingapp
+docker push christianfe/datingapp:latest
 docker run --rm -it -p 8080:80 christianfe/datingapp:latest
 
 
