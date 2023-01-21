@@ -5,6 +5,7 @@ using API.Middleware;
 using API.SignalR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,6 +51,7 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<LogMiddleware>();
 
 
 app.UseCors(builder =>
@@ -87,6 +89,19 @@ catch (Exception ex)
 {
 	var logger = services.GetService<ILogger<Program>>();
 	logger.LogError(ex, "An error Occured during the migration");
+	Log.Error(ex, "An error Occured during the migration");
 }
 
+/***/
+
+using var log = new LoggerConfiguration()
+	.WriteTo.Console()
+	.WriteTo.File("logs/log.log", rollingInterval: RollingInterval.Day)
+	.CreateLogger();
+
+Log.Logger = log;
+
+Log.Information("Hello, world!");
+
+/**/
 app.Run();

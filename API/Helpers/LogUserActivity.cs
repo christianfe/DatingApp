@@ -1,6 +1,8 @@
+using System.Text.Json;
 using API.Extensions;
 using API.Interfaces;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Serilog;
 
 namespace API.Helpers
 {
@@ -10,7 +12,8 @@ namespace API.Helpers
 		{
 			var resultContext = await next();
 
-			if (!resultContext.HttpContext.User.Identity.IsAuthenticated) return;
+			if (!resultContext.HttpContext.User.Identity.IsAuthenticated)
+				return;
 
 			var userId = resultContext.HttpContext.User.GetUserId();
 			var uow = resultContext.HttpContext.RequestServices.GetRequiredService<IUnitOfwork>();
@@ -18,5 +21,6 @@ namespace API.Helpers
 			user.LastActive = DateTime.UtcNow;
 			await uow.Complete();
 		}
+
 	}
 }

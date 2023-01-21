@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text;
 using System.Text.Json;
 using API.Errors;
 
@@ -24,7 +25,6 @@ namespace API.Middleware
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, ex.Message);
 				context.Response.ContentType = "application/json";
 				context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
@@ -38,8 +38,5 @@ namespace API.Middleware
 				await context.Response.WriteAsync(json);
 			}
 		}
-
-
-
 	}
 }
