@@ -23,3 +23,12 @@ flyctl log -a datingapp-christianfe
 ASPNETCORE_URLS="http://+:8080"
   CloudinarySetting__CloudName="dhh2pg3tc"
   CloudinarySetting__ApiKey="361114381184428"
+
+
+
+#
+CREATE Project
+
+dotnet new sln
+dotnet new webapi -n API
+dotnet sln add API

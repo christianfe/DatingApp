@@ -1,8 +1,6 @@
-using System.Text.Json;
 using API.Extensions;
 using API.Interfaces;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Serilog;
 
 namespace API.Helpers
 {
